@@ -73,13 +73,16 @@ struct JournalEditorView: View {
     }
     
     private var titleField: some View {
-        TextField("Title your entry...", text: $title)
-            .font(.system(size: 22, weight: .semibold))
-            .foregroundColor(.white)
-            .placeholder(using: Color(hex: "A0A0A0")) {
+        ZStack(alignment: .leading) {
+            if title.isEmpty {
                 Text("Title your entry...")
+                    .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(Color(hex: "A0A0A0"))
             }
+            TextField("", text: $title)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundColor(.white)
+        }
     }
     
     private var contentEditor: some View {
@@ -90,18 +93,12 @@ struct JournalEditorView: View {
             
             ZStack(alignment: .topLeading) {
                 if content.isEmpty {
-                    TextEditor(text: .constant(""))
-                        .font(.system(size: 17))
-                        .foregroundColor(Color(hex: "A0A0A0"))
-                        .scrollContentBackground(.hidden)
-                        .background(Color.clear)
-                        .disabled(true)
-                    
                     Text("Write your thoughts...")
                         .font(.system(size: 17))
                         .foregroundColor(Color(hex: "A0A0A0"))
                         .padding(.top, 8)
                         .padding(.leading, 4)
+                        .allowsHitTesting(false)
                 }
                 
                 TextEditor(text: $content)
@@ -109,7 +106,6 @@ struct JournalEditorView: View {
                     .foregroundColor(.white)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    .opacity(content.isEmpty ? 0.01 : 1)
             }
         }
     }
@@ -125,20 +121,6 @@ struct JournalEditorView: View {
         }
         
         dismiss()
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func placeholder<Content: View>(
-        using color: Color,
-        @ViewBuilder placeholder: () -> Content
-    ) -> some View {
-        ZStack(alignment: .leading) {
-            placeholder()
-                .opacity(self == nil ? 1 : 0)
-            self
-        }
     }
 }
 
